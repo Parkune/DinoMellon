@@ -30,6 +30,7 @@ public class Dongle : MonoBehaviour
         anim = GetComponent<Animator>();
         circle = GetComponent<CircleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        isDrag = false;
     }
 
 
@@ -42,7 +43,7 @@ public class Dongle : MonoBehaviour
 
     void OnDisable()
     {
-        
+
         //동글 속성 초기화
         level = 0;
         isDrag = false; 
@@ -68,6 +69,7 @@ public class Dongle : MonoBehaviour
 
         if (isDrag == true)
         {
+            print(isDrag);
             //동글의 마우스 포지션을 고정하는 것
             Vector3 mousePose = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float leftBorder = -4.2f + transform.localScale.x / 2f;
@@ -193,11 +195,14 @@ public class Dongle : MonoBehaviour
         }
 
         StartCoroutine(HideRoutine(targetPos));
-
+        if (manager.isOver == true)
+         return;
     }
 
     IEnumerator HideRoutine(Vector3 targetPos)
     {
+        
+        
         int frameCount = 0;
 
         while (frameCount < 20)
