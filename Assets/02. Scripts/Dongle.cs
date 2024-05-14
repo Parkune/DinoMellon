@@ -113,7 +113,7 @@ public class Dongle : MonoBehaviour
         {
             Dongle other = collision.gameObject.GetComponent<Dongle>();
 
-            if (level == other.level && !isMerge && !other.isMerge && level < 7)
+            if (level == other.level && !isMerge && !other.isMerge && level < 10)
             {
                 //동글 합치기 로직 
                 //나와 상대편 위치 가져오기
@@ -158,7 +158,7 @@ public class Dongle : MonoBehaviour
         {
             Dongle other = collision.gameObject.GetComponent<Dongle>();
 
-            if (level == other.level && !isMerge && !other.isMerge && level < 7)
+            if (level == other.level && !isMerge && !other.isMerge && level < 10)
             {
                 //동글 합치기 로직 
                 //나와 상대편 위치 가져오기

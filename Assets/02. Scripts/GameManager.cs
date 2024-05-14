@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     public int poolSize;
     public int poolCursor;
     public Dongle lastDongle;
+    public GameObject lunchPad;
 
     [Header("----------[Audio]")]
     public AudioSource bgmPlayer;
@@ -202,7 +203,7 @@ public class GameManager : MonoBehaviour
         int maxScore = Mathf.Max(score, PlayerPrefs.GetInt("MaxScore"));
         PlayerPrefs.SetInt("MaxScore", maxScore);
         //게임 오버 UI 표시
-        subScoreText.text = "점수:" + scoreText.text;
+        subScoreText.text = scoreText.text;
         endGroup.SetActive(true);
 
         bgmPlayer.Stop();
