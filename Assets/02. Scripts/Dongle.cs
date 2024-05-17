@@ -38,7 +38,7 @@ public class Dongle : MonoBehaviour
     {
      
         anim.SetInteger("Level", level);
-        
+        gameObject.transform.position = manager.playerPad.transform.position;
     }
 
     void OnDisable()
@@ -67,7 +67,7 @@ public class Dongle : MonoBehaviour
     void Update()
     {
 
-        if (isDrag == true)
+        if (rigid.simulated == false && isMerge ==false && manager.isOver == false)
         {
             print(isDrag);
             //동글의 마우스 포지션을 고정하는 것
@@ -84,11 +84,12 @@ public class Dongle : MonoBehaviour
                 mousePose.x = rightBorder;
             }
 
-            mousePose.y = 8;
+            mousePose.y = 5.5f;
             //2D기 때문에 3차원 좌표값을 고정해주는 것
             mousePose.z = 0;
             //마우스를 따라가는 속도
             transform.position = Vector3.Lerp(transform.position, mousePose, 0.2f);
+
         }
     }
 
@@ -97,6 +98,7 @@ public class Dongle : MonoBehaviour
     {
         isDrag = true;
         rigid.simulated = false;
+        manager.IsPlayerDrag = true;
     }
 
 
@@ -104,6 +106,7 @@ public class Dongle : MonoBehaviour
     {
         isDrag = false;
         rigid.simulated = true;
+        manager.IsPlayerDrag = false;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -128,8 +131,17 @@ public class Dongle : MonoBehaviour
                     //상대방은 숨기기
                     other.Hide(transform.position);
                     //나는 레벨업
-                    LevelUp();
+                    LevelUp(other.transform.position);
                 }
+            } 
+            else if (level == other.level && !isMerge && !other.isMerge && level == 10)
+            {
+                float meX = transform.position.x;
+                float meY = transform.position.y;
+                float otherX = other.transform.position.x;
+                float otherY = other.transform.position.y;
+                other.Hide(transform.position);
+                LevelMax();
             }
         }
     }
@@ -149,8 +161,29 @@ public class Dongle : MonoBehaviour
     }
 
 
+    public void LevelMax()
+    {
 
+        isMerge = true;
 
+        rigid.velocity = Vector2.zero;
+        rigid.angularVelocity = 0;
+
+        StartCoroutine(LevelMaxRoutine());
+
+    }
+    IEnumerator LevelMaxRoutine()
+    {
+        yield return new WaitForSeconds(0.05f);
+
+        EffectPlay();
+        manager.SfxPlay(GameManager.Sfx.LevelUp);
+
+        yield return new WaitForSeconds(0.05f);
+        this.Hide(transform.position);
+
+        isMerge = false;
+    }
 
     void OnCollisionStay2D(Collision2D collision)
     {
@@ -173,8 +206,17 @@ public class Dongle : MonoBehaviour
                     //상대방은 숨기기
                     other.Hide(transform.position);
                     //나는 레벨업
-                    LevelUp();
+                    LevelUp(other.transform.position);
                 }
+            }
+            else if (level == other.level && !isMerge && !other.isMerge && level == 10)
+            {
+                float meX = transform.position.x;
+                float meY = transform.position.y;
+                float otherX = other.transform.position.x;
+                float otherY = other.transform.position.y;
+                other.Hide(transform.position);
+                LevelMax();
             }
         }
     }
@@ -189,7 +231,7 @@ public class Dongle : MonoBehaviour
         rigid.simulated = false;
         circle.enabled = false;
 
-        if(targetPos == Vector3.up * 5000)
+        if(targetPos == Vector3.up * 500000)
         {
             EffectPlay();
         }
@@ -208,10 +250,10 @@ public class Dongle : MonoBehaviour
         while (frameCount < 20)
         {
             frameCount++;
-            if(targetPos != Vector3.up * 5000)
+            if(targetPos != Vector3.up * 500000)
             {
                 transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f);
-            }else if(targetPos == Vector3.up * 5000)
+            }else if(targetPos == Vector3.up * 500000)
             {
                 transform.localScale = Vector3.Lerp(transform.localScale, Vector3.zero, 0.2f);
             }
@@ -226,14 +268,14 @@ public class Dongle : MonoBehaviour
     }
 
 
-    public void LevelUp()
+    public void LevelUp(Vector3 otherPos)
     {
 
         isMerge = true;
 
         rigid.velocity = Vector2.zero;
         rigid.angularVelocity = 0;
-
+        otherPos = Vector3.Lerp(transform.position, otherPos, 0.5f);
         StartCoroutine(LevelUpRoutine());
 
     }
@@ -283,7 +325,7 @@ public class Dongle : MonoBehaviour
     }
 
 
-    void EffectPlay()
+    public void EffectPlay()
     {
         effect.transform.position = transform.position;
         effect.transform.localScale = transform.localScale;
